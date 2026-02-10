@@ -14,3 +14,14 @@ class GameSettings:
     
     # Musica
     FILE_MUSIC = "musica.mp3"
+    
+    # Directorios
+    DIR_BASE = Path(__file__).resolve().parent.parent
+    ASSETS_DIR: Path = DIR_BASE / "assets"
+    IMG_DIR: Path = ASSETS_DIR / "img"
+    SOUNDS_DIR: Path = ASSETS_DIR / "sounds"
+    MUSIC_DIR: Path = ASSETS_DIR / "ost"
+    
+    DIRS = [ASSETS_DIR, IMG_DIR, SOUNDS_DIR, MUSIC_DIR]
+    for d in DIRS:
+        d.mkdir(exist_ok=True)
