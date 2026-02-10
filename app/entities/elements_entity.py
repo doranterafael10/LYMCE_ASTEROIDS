@@ -1,12 +1,21 @@
-import pygame
+from abc import ABC, abstractmethod
+from pygame import Vector2, Surface
 
-class ElementEntity:
+class ElementEntity(ABC):
     def __init__(self, pos, vel):
-        self.pos = pygame.Vector2(pos)
-        self.vel = pygame.Vector2(vel)
+        self.pos = Vector2(pos)
+        self.vel = Vector2(vel)
 
-    def update(self):
-        self.pos += self.vel
+@abstractmethod
+def update(self):
+    """
+    Metodo abstracto para actualizar la posicion de la entidad.
+    """   
+    self.pos += self.vel
 
-    def draw(self, surface):
-        pass
+@abstractmethod
+def draw(self, surface: Surface):
+    """
+    Metodo abstracto para dibujar la entidad en una superficie.
+    """  
+    pass
