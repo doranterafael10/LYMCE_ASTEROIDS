@@ -1,6 +1,6 @@
 from pathlib import Path
 
-___version___ = "0.0.0"
+___version___ = "0.0.1"
 
 class GameSettings:
     # Informacion sobre el juego
