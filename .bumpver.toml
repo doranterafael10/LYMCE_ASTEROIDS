@@ -10,5 +10,5 @@ tag_scope = "global"
 
 [bumpver.file_patterns]
 "app/settings/game_settings.py" = [
-    '___version___ = "{version}" ',
+    '___version___ = "{version}"'
 ]
