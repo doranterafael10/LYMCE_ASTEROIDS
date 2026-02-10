@@ -1,0 +1,6 @@
+bumpver==2025.1131
+click==8.3.1
+colorama==0.4.6
+lexid==2021.1006
+pygame-ce==2.5.6
+toml==0.10.2
