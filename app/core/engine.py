@@ -1,22 +1,23 @@
 import pygame
 import os
 import random
-from app.settings.settings import *
-from app.enums.game_state_enum import GameState
-from app.elements.player_element import Player
-from app.elements.asteroid_element import Asteroid
-from app.elements.bullet_element import Bullet
-from app.elements.easter_egg import EasterEggHandler
-# Importación de componentes modulares
-from app.elements.instructions_view import InstructionsView
-from app.elements.credits_view import CreditsView
+from app.settings import GameColors, GameSettings
+from app.enums import GameState
 from app.core.cheat_manager import CheatManager
+from app.elements import (
+    InstructionsView,
+    CreditsView,
+    EasterEggHandler,
+    Bullet,
+    Asteroid,
+    Player
+)
 
 class GameEngine:
     def __init__(self):
         pygame.mixer.pre_init(44100, -16, 2, 2048)
         pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((GameSettings.WIDTH, GameSettings.HEIGHT))
         pygame.display.set_caption("ASTEROIDS 1.0")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Courier", 20, bold=True)
@@ -30,9 +31,9 @@ class GameEngine:
         self.running = True
         self.game_state = GameState.START 
         
-        if os.path.exists(FILE_MUSIC):
+        if os.path.exists(GameSettings.FILE_MUSIC):
             try:
-                pygame.mixer.music.load(FILE_MUSIC)
+                pygame.mixer.music.load(GameSettings.FILE_MUSIC)
                 pygame.mixer.music.play(-1)
             except: pass
         self.reset_game_logic()
@@ -85,7 +86,7 @@ class GameEngine:
                     # Teletransporte (Solo nivel 5 o más)
                     if self.level >= 5 and event.key == pygame.K_LSHIFT:
                         if self.jump_cooldown <= 0:
-                            self.player.pos = pygame.Vector2(random.randint(0, WIDTH), random.randint(0, HEIGHT))
+                            self.player.pos = pygame.Vector2(random.randint(0, GameSettings.WIDTH), random.randint(0, GameSettings.HEIGHT))
                             self.jump_cooldown = 2000
 
     def update(self, dt):
@@ -146,25 +147,25 @@ class GameEngine:
     def draw(self):
         # Dibujar fondo (o flash de truco)
         if self.cheats.flash_active:
-            self.screen.fill(GREEN)
+            self.screen.fill(GameColors.GREEN)
         else:
-            self.screen.fill(BLACK)
+            self.screen.fill(GameColors.BLACK)
 
         if self.game_state == GameState.PLAYING:
             self.player.draw(self.screen)
             for a in self.asteroids: a.draw(self.screen)
             for b in self.bullets: b.draw(self.screen)
             ui_text = f"SCORE: {self.player.score}  LVL: {self.level}  LIVES: {self.player.lives}"
-            self.screen.blit(self.font.render(ui_text, True, WHITE), (10, 10))
+            self.screen.blit(self.font.render(ui_text, True, GameColors.WHITE), (10, 10))
             if self.level == 10:
                 boss_txt = f"BOSS HP: {self.boss_health}"
-                self.screen.blit(self.font.render(boss_txt, True, RED), (WIDTH//2-60, 40))
+                self.screen.blit(self.font.render(boss_txt, True, GameColors.RED), (GameColors.WIDTH//2-60, 40))
         
         elif self.game_state == GameState.START:
-            self.screen.blit(self.font.render("ASTEROIDS 1.0", True, WHITE), (WIDTH//2-70, HEIGHT//2-120))
-            self.screen.blit(self.font.render("INICIAR JUEGO [ESPACIO]", True, WHITE), (WIDTH//2-120, HEIGHT//2 - 20))
-            self.screen.blit(self.font.render("INSTRUCCIONES [I]", True, WHITE), (WIDTH//2-120, HEIGHT//2 + 30))
-            self.screen.blit(self.font.render("CREDITOS      [C]", True, WHITE), (WIDTH//2-120, HEIGHT//2 + 80))
+            self.screen.blit(self.font.render(f"{GameSettings.GAME_NAME} - {GameSettings.GAME_VERSION}", True, GameColors.WHITE), (GameSettings.WIDTH//2-70, GameSettings.HEIGHT//2-120))
+            self.screen.blit(self.font.render("INICIAR JUEGO [ESPACIO]", True, GameColors.WHITE), (GameSettings.WIDTH//2-120, GameSettings.HEIGHT//2 - 20))
+            self.screen.blit(self.font.render("INSTRUCCIONES [I]", True, GameColors.WHITE), (GameSettings.WIDTH//2-120, GameSettings.HEIGHT//2 + 30))
+            self.screen.blit(self.font.render("CREDITOS      [C]", True, GameColors.WHITE), (GameSettings.WIDTH//2-120, GameSettings.HEIGHT//2 + 80))
 
         elif self.game_state == GameState.INSTRUCTIONS:
             self.instructions_screen.draw(self.screen)
@@ -173,17 +174,17 @@ class GameEngine:
             self.credits_screen.draw(self.screen)
             
         elif self.game_state == GameState.GAMEOVER:
-            self.screen.blit(self.font.render("GAME OVER - PULSA ESPACIO PARA MENU", True, WHITE), (WIDTH//2-180, HEIGHT//2))
+            self.screen.blit(self.font.render("GAME OVER - PULSA ESPACIO PARA MENU", True, GameColors.WHITE), (GameSettings.WIDTH//2-180, GameSettings.HEIGHT//2))
             
         elif self.game_state == GameState.VICTORY:
-            self.screen.blit(self.font.render("¡VICTORIA! - PULSA ESPACIO PARA MENU", True, WHITE), (WIDTH//2-180, HEIGHT//2))
+            self.screen.blit(self.font.render("¡VICTORIA! - PULSA ESPACIO PARA MENU", True, GameColors.WHITE), (GameSettings.WIDTH//2-180, GameSettings.HEIGHT//2))
             
         elif self.game_state == GameState.EASTER_EGG:
             self.easter_egg.update_and_draw(self.screen, self.asteroids)
 
     def run(self):
         while self.running:
-            dt = self.clock.tick(FPS)
+            dt = self.clock.tick(GameSettings.FPS)
             self.handle_events()
             self.update(dt)
             self.draw()
