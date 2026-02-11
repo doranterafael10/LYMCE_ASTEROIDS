@@ -6,16 +6,16 @@ class ElementEntity(ABC):
         self.pos = Vector2(pos)
         self.vel = Vector2(vel)
 
-@abstractmethod
-def update(self):
-    """
-    Metodo abstracto para actualizar la posicion de la entidad.
-    """   
-    self.pos += self.vel
+    @abstractmethod
+    def update(self):
+        """
+        Metodo abstracto para actualizar la posicion de la entidad.
+        """   
+        self.pos += self.vel
 
-@abstractmethod
-def draw(self, surface: Surface):
-    """
-    Metodo abstracto para dibujar la entidad en una superficie.
-    """  
-    pass
+    @abstractmethod
+    def draw(self, surface: Surface):
+        """
+        Metodo abstracto para dibujar la entidad en una superficie.
+        """  
+        pass
