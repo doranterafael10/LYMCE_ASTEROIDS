@@ -11,7 +11,7 @@ class ImageManager:
         self.images_dir: Path = game_settings.IMG_DIR
         self._images = {}
 
-    def obtener_imagen(self, name: str) -> Surface
+    def obtener_imagen(self, name: str) -> Surface:
         """
         Obtiene una imagen del directorio de imagenes.
 
