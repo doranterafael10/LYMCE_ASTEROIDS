@@ -2,6 +2,7 @@ import pygame
 import os
 import random
 from app.settings import GameColors, GameSettings
+from app.managers.sound_manager import SoundManager
 from app.enums import GameState
 from app.core.cheat_manager import CheatManager
 from app.elements import (
@@ -27,15 +28,11 @@ class GameEngine:
         self.credits_screen = CreditsView(self.font)
         self.cheats = CheatManager("lymce")
         self.easter_egg = EasterEggHandler()
+        self.sound_manager = SoundManager()
         
         self.running = True
         self.game_state = GameState.START 
         
-        if os.path.exists(GameSettings.FILE_MUSIC):
-            try:
-                pygame.mixer.music.load(GameSettings.FILE_MUSIC)
-                pygame.mixer.music.play(-1)
-            except: pass
         self.reset_game_logic()
 
     def reset_game_logic(self):
@@ -65,11 +62,14 @@ class GameEngine:
                 # 2. Navegación en Menú de Inicio
                 if self.game_state == GameState.START:
                     if event.key == pygame.K_SPACE:
+                        self.sound_manager.play_pista("world")
                         self.reset_game_logic()
                         self.game_state = GameState.PLAYING
                     elif event.key == pygame.K_i: 
                         self.game_state = GameState.INSTRUCTIONS
+                        self.sound_manager.play_pista("menu")
                     elif event.key == pygame.K_c: 
+                        self.sound_manager.play_pista("menu")
                         self.game_state = GameState.CREDITS
                 
                 # 3. Salir de submenús o pantallas de fin
@@ -82,10 +82,12 @@ class GameEngine:
                     # DISPARO CORREGIDO: Funciona en todos los niveles (incluyendo el 10)
                     if event.key == pygame.K_SPACE:
                         self.bullets.append(Bullet(self.player.pos, self.player.angle))
+                        self.sound_manager.play_efecto("Shot")
                     
                     # Teletransporte (Solo nivel 5 o más)
                     if self.level >= 5 and event.key == pygame.K_LSHIFT:
                         if self.jump_cooldown <= 0:
+                            self.sound_manager.play_efecto("tp")
                             self.player.pos = pygame.Vector2(random.randint(0, GameSettings.WIDTH), random.randint(0, GameSettings.HEIGHT))
                             self.jump_cooldown = 2000
 
@@ -115,6 +117,7 @@ class GameEngine:
                 
                 # Colisión Jugador - Asteroide
                 if self.player.pos.distance_to(a.pos) < a.radius + 10:
+                    self.sound_manager.play_efecto("choque")
                     self.player.lives -= 1
                     self.player.reset()
                     if self.player.lives <= 0:
@@ -123,6 +126,7 @@ class GameEngine:
                 # Colisión Bala - Asteroide
                 for b in self.bullets[:]:
                     if b.pos.distance_to(a.pos) < a.radius:
+                        self.sound_manager.play_efecto("explotion")
                         if b in self.bullets: self.bullets.remove(b)
                         
                         if self.level == 10: # Lógica especial para el Boss
@@ -159,7 +163,7 @@ class GameEngine:
             self.screen.blit(self.font.render(ui_text, True, GameColors.WHITE), (10, 10))
             if self.level == 10:
                 boss_txt = f"BOSS HP: {self.boss_health}"
-                self.screen.blit(self.font.render(boss_txt, True, GameColors.RED), (GameColors.WIDTH//2-60, 40))
+                self.screen.blit(self.font.render(boss_txt, True, GameColors.RED), (GameSettings.WIDTH//2-60, 40))
         
         elif self.game_state == GameState.START:
             self.screen.blit(self.font.render(f"{GameSettings.GAME_NAME} - {GameSettings.GAME_VERSION}", True, GameColors.WHITE), (GameSettings.WIDTH//2-70, GameSettings.HEIGHT//2-120))
