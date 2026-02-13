@@ -1,14 +1,14 @@
 from pygame import image, Surface
 from pathlib import Path
 
-from app.settings import game_settings
+from app.settings import GameSettings
 
 class ImageManager:
     """
     Clase para la gestion de imagenes.
     """
     def __init__(self) -> None:
-        self.images_dir: Path = game_settings.IMG_DIR
+        self.images_dir: Path = GameSettings.IMG_DIR
         self._images = {}
 
     def obtener_imagen(self, name: str) -> Surface:

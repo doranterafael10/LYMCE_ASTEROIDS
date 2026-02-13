@@ -1,11 +1,14 @@
 import pygame
 import random
+from app.managers.image_manager import ImageManager
 from app.settings.settings import WIDTH, HEIGHT, WHITE
 from app.entities.elements_entity import ElementEntity
 
 class Asteroid(ElementEntity):
     def __init__(self, pos=None, size=3, is_arepa=False, current_level=1):
         self.size = size
+        self.manager = ImageManager()
+        self.image = self.manager.obtener_imagen("asteroide")
         self.is_arepa = is_arepa
         self.radius = 150 if is_arepa else size * 15
         

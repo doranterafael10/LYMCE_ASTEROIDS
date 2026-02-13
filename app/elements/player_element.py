@@ -1,10 +1,14 @@
 import pygame
 from app.settings.settings import WIDTH, HEIGHT, WHITE
 from app.entities.elements_entity import ElementEntity
+from app.managers.image_manager import ImageManager
 
 class Player(ElementEntity):
     def __init__(self):
         super().__init__((WIDTH // 2, HEIGHT // 2), (0, 0))
+        self.manager = ImageManager()
+        self.image = self.manager.obtener_imagen("player")
+        self.rect = self.image.get_rect()
         self.lives = 3
         self.score = 0
         self.angle = 0
@@ -30,3 +34,4 @@ class Player(ElementEntity):
     def draw(self, surface):
         rotated_pts = [self.pos + pygame.Vector2(p).rotate(-self.angle) for p in self.points]
         pygame.draw.polygon(surface, WHITE, rotated_pts, 2)
+        #surface.blit(self.image, self.rect)
